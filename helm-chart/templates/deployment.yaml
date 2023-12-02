@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm-chart.fullname" . }}
+  labels:
+    {{- include "helm-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "helm-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "helm-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "helm-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 6080
+              protocol: TCP
+          env:
+            - name: ranger_db_root_user
+              value: "{{ .Values.ranger_admin_conf.ranger_db_root_user }}"
+            - name: ranger_db_root_password
+              value: "{{ .Values.ranger_admin_conf.ranger_db_root_password }}"
+            - name: db_name_ranger
+              value: "{{ .Values.ranger_admin_conf.ranger_db_name }}"
+            - name: ranger_admin_host
+              value: "{{ .Values.ranger_admin_conf.ranger_admin_host }}"
+            - name: ranger_db_host
+              value: "{{ .Values.ranger_admin_conf.ranger_db_host }}"
+            - name: ranger_db_port
+              value: "{{ .Values.ranger_admin_conf.ranger_db_port }}"
+            - name: JAVA_HOME
+              value: "{{ .Values.ranger_admin_conf.java_home }}"
+            - name: pg_conn
+              value: "{{ .Values.ranger_admin_conf.ranger_db_host }}:{{ .Values.ranger_admin_conf.ranger_db_port }}"
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/install.properties
+              subPath: install_properties
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/ranger-admin-site.xml
+              subPath: ranger-admin-site
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/logback.xml
+              subPath: logback
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/security-applicationContext.xml
+              subPath: security-applicationContext
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/java_home.sh
+              subPath: java_home
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/ranger-admin-env-hadoopconfdir.sh
+              subPath: ranger-admin-env-hadoopconfdir
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/ranger-admin-env-logback-conf-file.sh
+              subPath: ranger-admin-env-logback-conf-file
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/ranger-admin-env-logdir.sh
+              subPath: ranger-admin-env-logdir
+            - name: config-volume
+              mountPath: /opt/apache-ranger/ranger-current-admin/ews/webapp/WEB-INF/classes/conf/ranger-admin-env-piddir.sh
+              subPath: ranger-admin-env-piddir
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "helm-chart.fullname" . }}

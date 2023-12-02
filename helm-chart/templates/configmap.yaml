@@ -1,0 +1,676 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "helm-chart.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm-chart.name" . }}
+    helm.sh/chart: {{ include "helm-chart.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+    install_properties: |
+      JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+      PYTHON_COMMAND_INVOKER=python3
+      DB_FLAVOR=POSTGRES
+      SQL_CONNECTOR_JAR=/opt/apache-ranger/ranger-current-admin/ews/lib/postgresql.jar
+      db_root_user=db_root_user
+      db_root_password={{ .Values.ranger_admin_conf.ranger_db_root_password }}
+      db_host={{ .Values.ranger_admin_conf.ranger_db_host }}:{{ .Values.ranger_admin_conf.ranger_db_port }}
+      db_ssl_enabled=false
+      db_ssl_required=false
+      db_ssl_verifyServerCertificate=false
+      db_ssl_auth_type=2-way
+      javax_net_ssl_keyStore=
+      javax_net_ssl_keyStorePassword=
+      javax_net_ssl_trustStore=
+      javax_net_ssl_trustStorePassword=
+      javax_net_ssl_trustStore_type=jks
+      javax_net_ssl_keyStore_type=jks
+      db_ssl_certificate_file=
+      db_name={{ .Values.ranger_admin_conf.ranger_db_name }}
+      db_user={{ .Values.ranger_admin_conf.ranger_db_root_user }}
+      db_password={{ .Values.ranger_admin_conf.ranger_db_root_password }}
+      is_override_db_connection_string=false
+      db_override_connection_string=
+      rangerAdmin_password={{ .Values.ranger_admin_conf.keyadmin_password }}
+      rangerTagsync_password={{ .Values.ranger_admin_conf.rangerTagsync_password }}
+      rangerUsersync_password={{ .Values.ranger_admin_conf.rangerUsersync_password }}
+      keyadmin_password={{ .Values.ranger_admin_conf.keyadmin_password }}      
+      audit_store=solr
+      audit_elasticsearch_urls=
+      audit_elasticsearch_port=
+      audit_elasticsearch_protocol=
+      audit_elasticsearch_user=
+      audit_elasticsearch_password=
+      audit_elasticsearch_index=
+      audit_elasticsearch_bootstrap_enabled=true
+
+      audit_solr_urls={{ .Values.ranger_admin_conf.ranger_audit_solr_urls }}
+      audit_solr_user={{ .Values.ranger_admin_conf.SOLR_USER }}
+      audit_solr_password={{ .Values.ranger_admin_conf.SOLR_PASSWORD }}
+      audit_solr_zookeepers={{ .Values.ranger_admin_conf.ranger_audit_solr_zookeepers }}
+      audit_solr_collection_name=ranger_audits
+      #solr Properties for cloud mode
+      audit_solr_config_name=ranger_audits
+      audit_solr_configset_location=
+      audit_solr_no_shards=1
+      audit_solr_no_replica=1
+      audit_solr_max_shards_per_node=1
+      audit_solr_acl_user_list_sasl=solr,infra-solr
+      audit_solr_bootstrap_enabled=true
+      
+      audit_cloudwatch_region=
+      audit_cloudwatch_log_group=
+      audit_cloudwatch_log_stream_prefix=
+      
+      policymgr_external_url=http://{{ .Values.ranger_admin_conf.ranger_admin_host }}:{{ .Values.ranger_admin_conf.ranger_ui_port }}
+      policymgr_http_enabled=true
+      policymgr_https_keystore_file=
+      policymgr_https_keystore_keyalias=db_root_user
+      policymgr_https_keystore_password=
+      
+      policymgr_supportedcomponents=hdfs,yarn,hive,knox,ozone,tag,kafka
+
+      unix_user=ranger
+      unix_user_pwd={{ .Values.ranger_admin_conf.ranger_local_pass }}
+      unix_group=ranger
+      
+      authentication_method={{ .Values.ranger_admin_conf.ranger_authentication_method }}
+      remoteLoginEnabled=true
+      authServiceHostName=localhost
+      authServicePort=5151
+      ranger_unixauth_keystore=keystore.jks
+      ranger_unixauth_keystore_password=password
+      ranger_unixauth_truststore=cacerts
+      ranger_unixauth_truststore_password=changeit
+      
+      xa_ldap_url=
+      xa_ldap_userDNpattern=
+      xa_ldap_groupSearchBase=
+      xa_ldap_groupSearchFilter=
+      xa_ldap_groupRoleAttribute=
+      xa_ldap_base_dn=
+      xa_ldap_bind_dn=
+      xa_ldap_bind_password=
+      xa_ldap_referral=
+      xa_ldap_userSearchFilter=
+      
+      xa_ldap_ad_domain={{ .Values.ranger_admin_conf.ldap_domen }}
+      xa_ldap_ad_url=ldap://{{ .Values.ranger_admin_conf.ldap_host }}:{{ .Values.ranger_admin_conf.ldap_port }}
+      xa_ldap_ad_base_dn={{ .Values.ranger_admin_conf.ranger_ldap_ad_base_dn }}
+      xa_ldap_ad_bind_dn=ldap://{{ .Values.ranger_admin_conf.ldap_host }}:{{ .Values.ranger_admin_conf.ldap_port }}
+      xa_ldap_ad_bind_password={{ .Values.ranger_admin_conf.LDAP_PASSWORD }}
+      xa_ldap_ad_referral={{ .Values.ranger_admin_conf.ranger_ldap_ad_referral }}
+      xa_ldap_ad_userSearchFilter={{ .Values.ranger_admin_conf.ranger_ldap_ad_user_searchfilter }}
+      
+      spnego_principal=
+      spnego_keytab=
+      token_valid=30
+      cookie_domain=
+      cookie_path=/
+      admin_principal=
+      admin_keytab=
+      lookup_principal=
+      lookup_keytab=
+      hadoop_conf=/etc/hadoop-default
+      
+      sso_enabled=false
+      sso_providerurl=https://127.0.0.1:8443/gateway/knoxsso/api/v1/websso
+      sso_publickey=
+
+      RANGER_ADMIN_LOG_DIR=$PWD
+      RANGER_ADMIN_LOGBACK_CONF_FILE=
+      RANGER_PID_DIR_PATH=/tmp/ranger
+      
+      XAPOLICYMGR_DIR=$PWD
+      app_home=$PWD/ews/webapp
+      TMPFILE=$PWD/.fi_tmp
+      LOGFILE=$PWD/logfile
+      LOGFILES="$LOGFILE"
+      
+      JAVA_BIN='java'
+      JAVA_VERSION_REQUIRED='1.8'
+      JAVA_ORACLE='Java(TM) SE Runtime Environment'
+      java_opts=''
+      
+      ranger_admin_max_heap_size=1g
+
+      PATCH_RETRY_INTERVAL=120
+      STALE_PATCH_ENTRY_HOLD_TIME=10
+      
+      mysql_core_file=db/mysql/optimized/current/ranger_core_db_mysql.sql
+      mysql_audit_file=db/mysql/xa_audit_db.sql
+      oracle_core_file=db/oracle/optimized/current/ranger_core_db_oracle.sql
+      oracle_audit_file=db/oracle/xa_audit_db_oracle.sql
+      postgres_core_file=db/postgres/optimized/current/ranger_core_db_postgres.sql
+      postgres_audit_file=db/postgres/xa_audit_db_postgres.sql
+      sqlserver_core_file=db/sqlserver/optimized/current/ranger_core_db_sqlserver.sql
+      sqlserver_audit_file=db/sqlserver/xa_audit_db_sqlserver.sql
+      sqlanywhere_core_file=db/sqlanywhere/optimized/current/ranger_core_db_sqlanywhere.sql
+      sqlanywhere_audit_file=db/sqlanywhere/xa_audit_db_sqlanywhere.sql
+      cred_keystore_filename=$app_home/WEB-INF/classes/conf/.jceks/rangeradmin.jceks
+    ranger-admin-site: |
+      <configuration>
+      <property>
+        <name>ranger.jpa.jdbc.driver</name>
+        <value>org.postgresql.Driver</value>
+      </property>
+      <property>
+        <name>ranger.jpa.jdbc.url</name>
+        <value>jdbc:postgresql://{{ .Values.ranger_admin_conf.ranger_db_host }}:{{ .Values.ranger_admin_conf.ranger_db_port }}/{{ .Values.ranger_admin_conf.ranger_db_name }}</value>
+      </property>
+      <property>
+        <name>ranger.jpa.jdbc.user</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_db_root_user }}</value>
+      </property>
+      <property>
+        <name>ranger.jpa.jdbc.password</name>
+        <value>_</value>
+      </property>
+      <property>
+        <name>ranger.externalurl</name>
+        <value>http://{{ .Values.ranger_admin_conf.ranger_admin_host }}:{{ .Values.ranger_admin_conf.ranger_ui_port }}</value>
+      </property>
+      <property>
+        <name>ranger.scheduler.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>ranger.audit.elasticsearch.urls</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.elasticsearch.port</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.elasticsearch.user</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.elasticsearch.password</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.elasticsearch.index</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.elasticsearch.bootstrap.enabled</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.amazon_cloudwatch.region</name>
+        <value>us-east-2</value>
+      </property>
+      <property>
+        <name>ranger.audit.amazon_cloudwatch.log_group</name>
+        <value>ranger_audits</value>
+      </property>
+      <property>
+        <name>ranger.audit.amazon_cloudwatch.log_stream_prefix</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.solr.urls</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.source.type</name>
+        <value>solr</value>
+      </property>
+      <property>
+        <name>ranger.service.http.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>ranger.authentication.method</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_authentication_method }}</value>
+      </property>
+      <property>
+        <name>ranger.ldap.url</name>
+        <value>ldap://</value>
+      </property>
+      <property>
+        <name>ranger.ldap.user.dnpattern</name>
+        <value>uid={0},ou=users,dc=xasecure,dc=net</value>
+      </property>
+      <property>
+        <name>ranger.ldap.group.searchbase</name>
+        <value>ou=groups,dc=xasecure,dc=net</value>
+      </property>
+      <property>
+        <name>ranger.ldap.group.searchfilter</name>
+        <value>(member=uid={0},ou=users,dc=xasecure,dc=net)</value>
+      </property>
+      <property>
+        <name>ranger.ldap.group.roleattribute</name>
+        <value>cn</value>
+      </property>
+      <property>
+        <name>ranger.ldap.base.dn</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.ldap.bind.dn</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.ldap.bind.password</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.ldap.default.role</name>
+        <value>ROLE_USER</value>
+      </property>
+      <property>
+        <name>ranger.ldap.referral</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.ldap.ad.domain</name>
+        <value>{{ .Values.ranger_admin_conf.ldap_domen }}</value>
+      </property>
+      <property>
+        <name>ranger.ldap.ad.url</name>
+        <value>ldap://{{ .Values.ranger_admin_conf.ranger_ldap_ad_url }}:{{ .Values.ranger_admin_conf.ldap_port }}</value>
+      </property>
+      <property>
+        <name>ranger.ldap.ad.base.dn</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_ldap_ad_base_dn }}</value>
+      </property>
+      <property>
+        <name>ranger.ldap.ad.bind.dn</name>
+        <value>CN={{ .Values.ranger_admin_conf.LDAP_USERNAME }},{{ .Values.ranger_admin_conf.ranger_ldap_ad_bind_dn_gr }}</value>
+      </property>
+      <property>
+        <name>ranger.ldap.ad.bind.password</name>
+        <value>{{ .Values.ranger_admin_conf.LDAP_PASSWORD }}</value>
+      </property>
+      <property>
+        <name>ranger.ldap.ad.referral</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_ldap_ad_referral }}</value>
+      </property>
+      <property>
+        <name>ranger.service.https.attrib.ssl.enabled</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>ranger.service.https.attrib.keystore.keyalias</name>
+        <value>myKey</value>
+      </property>
+      <property>
+        <name>ranger.service.https.attrib.keystore.pass</name>
+        <value>_</value>
+      </property>
+      <property>
+        <name>ranger.service.host</name>
+        <value>localhost</value>
+      </property>
+      <property>
+        <name>ranger.service.http.port</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_ui_port }}</value>
+      </property>
+      <property>
+        <name>ranger.service.https.port</name>
+        <value>6182</value>
+      </property>
+      <property>
+        <name>ranger.service.https.attrib.keystore.file</name>
+        <value>/etc/ranger/admin/keys/server.jks</value>
+      </property>
+      <property>
+        <name>ranger.solr.audit.user</name>
+        <value>{{ .Values.ranger_admin_conf.SOLR_USER }}</value>
+      </property>
+      <property>
+        <name>ranger.solr.audit.user.password</name>
+        <value>{{ .Values.ranger_admin_conf.SOLR_PASSWORD }}</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.zookeepers</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_audit_solr_zookeepers }}</value>
+      </property>
+      <property>
+        <name>ranger.ldap.user.searchfilter</name>
+        <value>(uid={0})</value>
+      </property>
+      <property>
+        <name>ranger.ldap.ad.user.searchfilter</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_ldap_ad_user_searchfilter }}</value>
+      </property>
+      <property>
+        <name>ranger.sso.providerurl</name>
+        <value>https://127.0.0.1:8443/gateway/knoxsso/api/v1/websso</value>
+      </property>
+      <property>
+        <name>ranger.sso.publicKey</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.sso.enabled</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>ranger.sso.browser.useragent</name>
+        <value>Mozilla,chrome</value>
+      </property>
+      <property>
+        <name>ranger.admin.kerberos.token.valid.seconds</name>
+        <value>30</value>
+      </property>
+      <property>
+        <name>ranger.admin.kerberos.cookie.domain</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.admin.kerberos.cookie.path</name>
+        <value>/</value>
+      </property>
+      <property>
+        <name>ranger.admin.kerberos.principal</name>
+        <value>rangeradmin/_HOST@REALM</value>
+      </property>
+      <property>
+        <name>ranger.admin.kerberos.keytab</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.spnego.kerberos.principal</name>
+        <value>HTTP/_HOST@REALM</value>
+      </property>
+      <property>
+        <name>ranger.spnego.kerberos.keytab</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.lookup.kerberos.principal</name>
+        <value>rangerlookup/_HOST@REALM</value>
+      </property>
+      <property>
+        <name>ranger.lookup.kerberos.keytab</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.supportedcomponents</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_supportedcomponents }}</value>
+      </property>
+      <property>
+        <name>ranger.downloadpolicy.session.log.enabled</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>ranger.kms.service.user.hdfs</name>
+        <value>hdfs</value>
+      </property>
+      <property>
+        <name>ranger.kms.service.user.hive</name>
+        <value>hive</value>
+      </property>
+      <property>
+        <name>ranger.kms.service.user.hbase</name>
+        <value>hbase</value>
+      </property>
+      <property>
+        <name>ranger.kms.service.user.om</name>
+        <value>om</value>
+      </property>
+      <property>
+        <name>ranger.audit.hive.query.visibility</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>ranger.service.https.attrib.keystore.credential.alias</name>
+        <value>keyStoreCredentialAlias</value>
+      </property>
+      <property>
+        <name>ranger.tomcat.ciphers</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.solr.collection.name</name>
+        <value>ranger_audits</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.config.name</name>
+        <value>ranger_audits</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.configset.location</name>
+      <value />
+      </property>
+      <property>
+        <name>ranger.audit.solr.no.shards</name>
+        <value>1</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.max.shards.per.node</name>
+        <value>1</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.no.replica</name>
+        <value>1</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.acl.user.list.sasl</name>
+        <value>solr</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.bootstrap.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.time.interval</name>
+        <value>6000</value>
+      </property>
+      <property>
+        <name>ranger.audit.solr.max.retry</name>
+        <value>30</value>
+      </property>
+      <property>
+        <name>ranger.plugins.solr.serviceuser</name>
+        <value>solr</value>
+      </property>
+      <property>
+        <name>ranger.admin.cookie.name</name>
+        <value>{{ .Values.ranger_admin_conf.ranger_admin_cookie_name }}</value>
+      </property>
+      </configuration>
+    logback: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <configuration>
+            <appender name="xa_log_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${logdir}/ranger-admin-${hostname}-${user}.log</file>
+                <append>true</append>
+                <encoder>
+                <pattern>%date [%thread] %level{5} [%file:%line] %msg%n</pattern>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${logdir}/ranger-admin-${hostname}-${user}.log.%d{yyyy-MM-dd}</fileNamePattern>
+                <maxHistory>15</maxHistory>
+                <cleanHistoryOnStart>true</cleanHistoryOnStart>
+                </rollingPolicy>
+            </appender>
+            <appender name="sql_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${logdir}/ranger_admin_sql.log</file>
+                <append>true</append>
+                <encoder>
+                <pattern>%d [%t] %-5p %C{6} \(%F:%L\) %msg%n</pattern>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${logdir}/ranger_admin_sql.log.%d{yyyy-MM-dd}</fileNamePattern>
+                <maxHistory>15</maxHistory>
+                <cleanHistoryOnStart>true</cleanHistoryOnStart>
+                </rollingPolicy>
+            </appender>
+                <appender name="perf_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${logdir}/ranger_admin_perf.log</file>
+                <append>true</append>
+                <encoder>
+                <pattern>%d [%t] %msg%n</pattern>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${logdir}/ranger_admin_perf.log.%d{yyyy-MM-dd}</fileNamePattern>
+                <maxHistory>15</maxHistory>
+                <cleanHistoryOnStart>true</cleanHistoryOnStart>
+                </rollingPolicy>
+            </appender>
+                <appender name="patch_logger" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <append>true</append>
+                <file>${logdir}/ranger_db_patch.log</file>
+                <encoder>
+                <pattern>%d [%t] %-5p %C{6} \(%F:%L\) %msg%n</pattern>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${logdir}/ranger_db_patch.log.%d{yyyy-MM-dd}</fileNamePattern>
+                <maxHistory>15</maxHistory>
+                <cleanHistoryOnStart>true</cleanHistoryOnStart>
+                </rollingPolicy>
+            </appender>
+            <logger name="xa" additivity="false" level="info">
+                <appender-ref ref="xa_log_appender"/>
+            </logger>
+            <logger name="jdbc.connection" additivity="false" level="error">
+                <appender-ref ref="sql_appender"/>
+            </logger>
+            <logger name="com.mchange" additivity="false" level="warn" />
+            <logger name="org.apache.ranger.perf" additivity="false" level="info">
+                <appender-ref ref="perf_appender"/>
+            </logger>
+            <logger name="jdbc.audit" additivity="false" level="error">
+                <appender-ref ref="sql_appender"/>
+            </logger>
+            <logger name="org.apache.ranger.patch" additivity="false" level="info">
+                <appender-ref ref="patch_logger"/>
+            </logger>
+            <logger name="jdbc.resultset" additivity="false" level="error">
+                <appender-ref ref="sql_appender"/>
+            </logger>
+            <logger name="org.springframework" additivity="false" level="warn">
+                <appender-ref ref="patch_logger"/>
+            </logger>
+            <logger name="jdbc.sqltiming" additivity="false" level="warn">
+                <appender-ref ref="sql_appender"/>
+            </logger>
+            <logger name="org.hibernate.SQL" additivity="false" level="warn">
+                <appender-ref ref="sql_appender"/>
+            </logger>
+            <logger name="org.apache.ranger" additivity="false" level="info">
+                <appender-ref ref="xa_log_appender"/>
+            </logger>
+            <logger name="jdbc.sqlonly" additivity="false" level="error">
+                <appender-ref ref="sql_appender"/>
+            </logger>
+                <root level="warn">
+                <appender-ref ref="xa_log_appender"/>
+            </root>
+        </configuration>
+    security-applicationContext: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <beans:beans xmlns="http://www.springframework.org/schema/security"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:security="http://www.springframework.org/schema/security"
+        xmlns:util="http://www.springframework.org/schema/util"
+        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-5.7.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-4.3.xsd
+        http://www.springframework.org/schema/security/oauth2
+        http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
+        <security:http pattern="/login.jsp" security="none" />
+        <security:http pattern="/styles/**" security="none" />
+        <security:http pattern="/fonts/**" security="none" />
+        <security:http pattern="/scripts/prelogin/XAPrelogin.js" security="none" />
+        <security:http pattern="/libs/bower/jquery/js/jquery-3.5.1.js" security="none" />
+        <security:http pattern="/images/ranger_logo.png" security="none" />
+        <security:http pattern="/images/favicon.ico" security="none"/>
+        <security:http pattern="/service/assets/policyList/*" security="none"/>
+        <security:http pattern="/service/assets/resources/grant" security="none"/>
+        <security:http pattern="/service/assets/resources/revoke" security="none"/>
+        <security:http pattern="/service/plugins/policies/download/*" security="none"/>
+        <security:http pattern="/service/plugins/services/grant/*" security="none"/>
+        <security:http pattern="/service/plugins/services/revoke/*" security="none"/>
+        <security:http pattern="/service/tags/download/*" security="none"/>
+        <security:http pattern="/service/roles/download/*" security="none"/>
+        <security:http pattern="/service/xusers/download/*" security="none"/>
+        <security:http pattern="/service/metrics/status" security="none" />
+        <security:http disable-url-rewriting="true" use-expressions="true" create-session="always" entry-point-ref="authenticationProcessingFilterEntryPoint">
+        <csrf disabled="true"/>
+        <security:headers>
+        <security:frame-options/>
+        <security:cache-control/>
+        <security:content-type-options/>
+        <security:xss-protection/>
+        <security:hsts/>
+        <security:content-security-policy policy-directives="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';font-src 'self'"/>
+        </security:headers>
+        <security:session-management session-fixation-protection="newSession" />
+        <intercept-url pattern="/**" access="isAuthenticated()"/>
+        <custom-filter ref="ssoAuthenticationFilter" after="BASIC_AUTH_FILTER" />
+        <security:custom-filter ref="krbAuthenticationFilter" after="SERVLET_API_SUPPORT_FILTER" />
+        <security:custom-filter ref="CSRFPreventionFilter" after="REMEMBER_ME_FILTER" />
+        <security:custom-filter position="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter"/>
+        <security:custom-filter position="LAST" ref="userContextFormationFilter"/>
+        <security:access-denied-handler error-page="/login.jsp"/>
+        <security:logout delete-cookies="${ranger.admin.cookie.name}" logout-url="/logout" success-handler-ref="customLogoutSuccessHandler" />
+        <http-basic entry-point-ref="authenticationProcessingFilterEntryPoint"/>
+        </security:http>
+        <beans:bean id="customAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <beans:constructor-arg>
+        <beans:list>
+        <beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+        <beans:bean class="org.springframework.security.access.vote.RoleVoter" />
+        </beans:list>
+        </beans:constructor-arg>
+        </beans:bean>
+        <beans:bean id="customUsernamePasswordAuthenticationFilter" class="org.apache.ranger.security.web.filter.RangerUsernamePasswordAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationSuccessHandler" ref="ajaxAuthSuccessHandler"/>
+        <beans:property name="authenticationFailureHandler"	ref="ajaxAuthFailureHandler"/>
+        </beans:bean>
+        <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.apache.ranger.security.web.authentication.RangerAuthenticationEntryPoint">
+        <beans:constructor-arg value="/login.jsp"/>
+        </beans:bean>
+        <beans:bean id="ajaxAuthSuccessHandler" class="org.apache.ranger.security.web.authentication.RangerAuthSuccessHandler">
+        <beans:property name="defaultTargetUrl" value="/dashboard.jsp"/>
+        </beans:bean>
+        <beans:bean id="ajaxAuthFailureHandler" class="org.apache.ranger.security.web.authentication.RangerAuthFailureHandler">
+        <beans:property name="defaultFailureUrl" value="/login.jsp"/>
+        </beans:bean>
+        <beans:bean id="customLogoutSuccessHandler" class="org.apache.ranger.security.web.authentication.CustomLogoutSuccessHandler">
+        </beans:bean>
+        <beans:bean id="krbAuthenticationFilter" class="org.apache.ranger.security.web.filter.RangerKRBAuthenticationFilter">
+        </beans:bean>
+        <beans:bean id="CSRFPreventionFilter" class="org.apache.ranger.security.web.filter.RangerCSRFPreventionFilter">
+        </beans:bean>
+        <beans:bean id="mdcFilter" class="org.apache.ranger.security.web.filter.RangerMDCFilter">
+        </beans:bean>
+        <beans:bean id="ssoAuthenticationFilter" class="org.apache.ranger.security.web.filter.RangerSSOAuthenticationFilter">
+        </beans:bean>
+        <beans:bean id="userContextFormationFilter" class="org.apache.ranger.security.web.filter.RangerSecurityContextFormationFilter"/>
+        <security:jdbc-user-service id="userService" data-source-ref="defaultDataSource"
+        users-by-username-query="select LOGIN_ID,PASSWORD,STATUS from x_portal_user where LOGIN_ID=?"
+        group-authorities-by-username-query=""
+        authorities-by-username-query="SELECT usr.LOGIN_ID,usr_role.USER_ROLE FROM x_portal_user usr,x_portal_user_role usr_role
+        WHERE usr.LOGIN_ID=?
+        AND usr_role.USER_ID = usr.ID"
+        />
+        <beans:bean id="customAuthenticationProvider" class="org.apache.ranger.security.handler.RangerAuthenticationProvider" >
+        <beans:property name="rangerAuthenticationMethod" value="${ranger.authentication.method}" />
+        </beans:bean>
+        <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="customAuthenticationProvider"/>
+        </security:authentication-manager>
+        <security:global-method-security pre-post-annotations="enabled" />
+        <beans:bean id="securityEventListener" class ="org.apache.ranger.security.listener.SpringEventListener"/>
+        </beans:beans>
+    java_home: export JAVA_HOME={{ .Values.ranger_admin_conf.java_home }}
+    ranger-admin-env-hadoopconfdir: export RANGER_HADOOP_CONF_DIR={{ .Values.ranger_admin_conf.hadoop_home }}
+    ranger-admin-env-logback-conf-file: export RANGER_ADMIN_LOGBACK_CONF_FILE={{ .Values.ranger_admin_conf.ranger_admin_env_logback_conf_file }}
+    ranger-admin-env-logdir: export RANGER_ADMIN_LOG_DIR={{ .Values.ranger_admin_conf.ranger_admin_env_logdir }}
+    ranger-admin-env-piddir: |
+      export RANGER_PID_DIR_PATH={{ .Values.ranger_admin_conf.ranger_admin_env_piddir }}
+      export RANGER_USER=ranger
