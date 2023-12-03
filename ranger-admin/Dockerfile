@@ -9,7 +9,8 @@ ARG LANDSCAPE=dev
 ARG HADOOP_VERSION=3.1.3
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV RANGER_HOME=/opt/apache-ranger/ranger-current-admin
+ENV RANGER_PARENT_DIR=/opt/apache-ranger
+ENV RANGER_HOME=${RANGER_PARENT_DIR}/ranger-current-admin
 ENV HADOOP_HOME=/etc/hadoop-default
 
 
@@ -30,17 +31,17 @@ RUN apt update -y && \
     rm -rf /var/lib/apt/lists/* && \
     cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
     echo ${TZ} > /etc/timezone && \
-    mkdir /opt/apache-ranger &&  \
+    mkdir ${RANGER_PARENT_DIR} &&  \
     useradd -m -s /bin/bash $RANGER_USER && \
     echo "$RANGER_USER:$RANGER_USER_PASS" | chpasswd && \
     mkdir -p ${HADOOP_HOME}
 
-WORKDIR /opt/apache-ranger
+WORKDIR ${RANGER_PARENT_DIR}
 
-ADD https://apache-hadoop.ru/git/ranger-${RANGER_HOME}-admin.tar.gz /opt/apache-ranger
+ADD https://apache-hadoop.ru/git/ranger-${RANGER_HOME}-admin.tar.gz ${RANGER_PARENT_DIR}
 
 RUN tar -xzf ranger-${RANGER_VERSION}-admin.tar.gz &&  \
-    ln -sf /opt/apache-ranger/ranger-${RANGER_VERSION}-admin ${RANGER_HOME} && \
+    ln -sf ${RANGER_PARENT_DIR}/ranger-${RANGER_VERSION}-admin ${RANGER_HOME} && \
     mkdir -p /etc/ranger/admin/keys &&  \
     rm -rf ranger-${RANGER_VERSION}-admin.tar.gz &&  \
     mkdir -p ${RANGER_HOME}/ews/webapp/WEB-INF/classes/conf && \
@@ -59,7 +60,7 @@ COPY docker-entrypoint.sh ${RANGER_HOME}
 COPY ${HADOOP_HOME}/core-site.xml ${RANGER_HOME}/ews/webapp/WEB-INF/classes/conf
 
 RUN chmod +x ${RANGER_HOME}/docker-entrypoint.sh && \
-    chown -R $RANGER_USER: /opt/apache-ranger
+    chown -R $RANGER_USER: ${RANGER_PARENT_DIR}
 
 EXPOSE 6080
 

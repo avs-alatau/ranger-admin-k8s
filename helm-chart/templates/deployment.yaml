@@ -54,14 +54,14 @@ spec:
               value: "{{ .Values.ranger_admin_conf.java_home }}"
             - name: pg_conn
               value: "{{ .Values.ranger_admin_conf.ranger_db_host }}:{{ .Values.ranger_admin_conf.ranger_db_port }}"
-#          livenessProbe:
-#            httpGet:
-#              path: /
-#              port: http
-#          readinessProbe:
-#            httpGet:
-#              path: /
-#              port: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           volumeMounts:
             - name: config-volume
               mountPath: /opt/apache-ranger/ranger-current-admin/install.properties
