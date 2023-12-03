@@ -2,7 +2,7 @@
 
 ## Ranger Admin
 
-The lightweight working version of ranger-admin in kubernetes - helm, Docker
+The lightweight working version of ranger-admin for kubernetes - helm, Docker
 
 Basic Settings:
 - Dockerfile - if necessary correct your paths to apps
