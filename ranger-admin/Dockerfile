@@ -37,7 +37,7 @@ RUN apt update -y && \
 
 WORKDIR /opt/apache-ranger
 
-ADD https://www.apache.org/dist/ranger/${RANGER_VERSION}/apache-ranger-${RANGER_VERSION}.tar.gz /opt/apache-ranger
+ADD https://apache-hadoop/git//apache-ranger-${RANGER_VERSION}.tar.gz /opt/apache-ranger
 
 RUN tar -xzf ranger-${RANGER_VERSION}-admin.tar.gz &&  \
     ln -sf /opt/apache-ranger/ranger-${RANGER_VERSION}-admin ${RANGER_HOME} && \
