@@ -9,4 +9,7 @@ source ./setup.sh
 rm -rf ${RANGER_HOME}/ews/webapp/WEB-INF/classes/conf/core-site.xml && \
 ln -s ${HADOOP_HOME}/core-site.xml ${RANGER_HOME}/ews/webapp/WEB-INF/classes/conf/ && \
 find ${RANGER_HOME} -name "*.sh" -execdir chmod u+x {} + && \
-${RANGER_HOME}/ews/ranger-admin-services.sh start;tail -f ${RANGER_HOME}/ews/logs/ranger-admin-*.log
+chown -R ranger: /opt/apache-ranger/ranger-current-admin  && \
+su - ranger && \
+/opt/apache-ranger/ranger-current-admin/ews/ranger-admin-services.sh start  && \
+tail -f /opt/apache-ranger/ranger-current-admin/ews/logs/ranger-admin-*.log
